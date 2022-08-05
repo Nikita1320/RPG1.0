@@ -32,4 +32,10 @@ public class Drag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
         transform.localPosition = Vector3.zero;
         canvasGroup.blocksRaycasts = true;
     }
+
+    private void OnDisable()
+    {
+        transform.localPosition = Vector3.zero;
+        canvasGroup.blocksRaycasts = true;
+    }
 }

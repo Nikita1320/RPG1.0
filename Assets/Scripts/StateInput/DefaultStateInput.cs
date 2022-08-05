@@ -10,6 +10,12 @@ public class DefaultStateInput : BaseStateInput
         stateMachine.inputController.Default.Jump.performed += context => stateMachine.jumpEvent?.Invoke();
         stateMachine.inputController.Default.Block.performed += context => stateMachine.blockEvent?.Invoke();
         stateMachine.inputController.Default.Jerk.performed += context => stateMachine.jerkEvent?.Invoke();
+
+        stateMachine.inputController.Default.Ability1.performed += context => stateMachine.abilityEvent?.Invoke(1);
+        stateMachine.inputController.Default.Ability1.performed += context => stateMachine.abilityEvent?.Invoke(2);
+        stateMachine.inputController.Default.Ability1.performed += context => stateMachine.abilityEvent?.Invoke(3);
+        stateMachine.inputController.Default.Ability1.performed += context => stateMachine.abilityEvent?.Invoke(4);
+        stateMachine.inputController.Default.Ability1.performed += context => stateMachine.abilityEvent?.Invoke(5);
     }
 
     public override void Exit()

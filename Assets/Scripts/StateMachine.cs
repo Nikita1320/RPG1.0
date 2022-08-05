@@ -30,7 +30,7 @@ public class StateMachine : MonoBehaviour
     public ExitBlockEvent exitBlockEvent;
 
     public delegate void AbilityEvent(int abilityNumber);
-    public AbilityEvent ability1Event;
+    public AbilityEvent abilityEvent;
 
     public delegate void ConsumableEvent(int consumableNumber);
     public ConsumableEvent consumable1Event;
