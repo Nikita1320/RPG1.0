@@ -22,7 +22,7 @@ public class DropAbility : MonoBehaviour, IDropHandler
 
                     dropAbilitySlot.AddAbility(abilityConteiner);
                     MoveToSlot(abilityConteiner.transform, transform);
-                    dragSlot.ClearSlot(false);
+                    dragSlot.abilityConteiner = null;
                 }
                 else
                 {
@@ -45,7 +45,7 @@ public class DropAbility : MonoBehaviour, IDropHandler
                 }
                 else
                 {
-                    dropAbilitySlot.ClearSlot(true);
+                    dropAbilitySlot.ClearSlot();
                     dropAbilitySlot.AddAbility(abilityConteiner);
                     MoveToSlot(abilityConteiner.transform, transform);
                 }

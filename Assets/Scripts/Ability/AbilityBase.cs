@@ -14,12 +14,11 @@ public class AbilityBase : MonoBehaviour
     public string discription;
     public Image image;
 
-    public bool canBeUsed;
+    public bool canBeUsed = true;
+    public float coolDown;
 
     public AnimationClip animationClip;
     public TypeAbility typeAbility;
-
-    private Character character;
 
     public virtual void StartAbility(Character _character) { }
     public virtual void Use() { }

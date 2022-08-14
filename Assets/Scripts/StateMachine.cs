@@ -5,17 +5,27 @@ using UnityEngine;
 public enum States
 {
     Default,
-    InAir,
     Block,
-    Jerk
+    Attack,
+    InAir,
+    UseAbility,
+    UseConsumables,
+    Jerk,
+    Disable
 }
 public class StateMachine : MonoBehaviour
 {
-    public delegate void ChangeStateEvent(States _state);
-    public ChangeStateEvent changeStateEvent;
+    public delegate void StartStateEvent(States _state);
+    public StartStateEvent startStateEvent;
+
+    public delegate void ExitStateEvent(States _state);
+    public ExitStateEvent exitStateEvent;
 
     public delegate void MoveEvent(Vector2 direction);
     public MoveEvent moveEvent;
+
+    public delegate void AttackEvent();
+    public AttackEvent attackEvent;
 
     public delegate void JumpEvent();
     public JumpEvent jumpEvent;
@@ -33,52 +43,89 @@ public class StateMachine : MonoBehaviour
     public AbilityEvent abilityEvent;
 
     public delegate void ConsumableEvent(int consumableNumber);
-    public ConsumableEvent consumable1Event;
+    public ConsumableEvent consumableEvent;
 
     public InputController inputController;
 
     private List<BaseStateInput> states = new List<BaseStateInput>();
-    public BaseStateInput currentState;
+    public BaseStateInput currentState1;
+    public States currentState;
 
-    void Start()
+    void Awake()
     {
         inputController = new InputController();
-        inputController.Enable();
-
+    }
+    private void Start()
+    {
+        currentState = States.Disable;
+        InitEvent();
         InitState();
     }
 
     void FixedUpdate()
     {
-        currentState.FixedUpdate();
+        if (currentState == States.Default)
+        {
+            moveEvent?.Invoke(inputController.Default.Move.ReadValue<Vector2>());
+        }
     }
 
-    public void ChangeState(States _state = States.Default)
+    public void ChangeState(States _state)
     {
-        if (currentState != null)
+        if (currentState == States.Default && _state != States.Block)
         {
-            currentState.Exit();
+            inputController.InBlock.Disable();
         }
 
-        currentState = states[(int)_state];
-        currentState.Begin();
+        exitStateEvent?.Invoke(currentState);
 
-        changeStateEvent?.Invoke(_state);
-        Debug.Log(currentState);
+        if ((int)currentState < 3)
+        {
+            states[(int)currentState].Exit();
+        }
+
+        currentState = _state;
+
+        if ((int)currentState < 3)
+        {
+            states[(int)_state].Begin();
+        }
+
+        startStateEvent?.Invoke(_state);
     }
     public void InitState()
     {
         states.Add(new DefaultStateInput());
-        states.Add(new InAirState());
-        states.Add(new ShieldStateInput());
-        states.Add(new JerkState());
+        states.Add(new BlockStateInput());
+        states.Add(new AttackStateInput());
 
         for (int i = 0; i < states.Count; i++)
         {
-            states[i].Init(this);
-            Debug.Log(states[i]);
+            states[i].Init(inputController);
         }
 
-        ChangeState();
+        ChangeState(States.Default);
+    }
+    public void InitEvent()
+    {
+        inputController.Default.Jump.performed += context => jumpEvent?.Invoke();
+        inputController.Default.Jerk.performed += context => jerkEvent?.Invoke();
+        inputController.Default.Block.performed += context => blockEvent?.Invoke();
+        inputController.InBlock.ExitBlock.performed += context => exitBlockEvent?.Invoke();
+        inputController.Default.Attack.performed += context => attackEvent?.Invoke();
+        inputController.Attack.Attack.performed += context => attackEvent?.Invoke();
+
+        inputController.Default.Ability1.performed += context => abilityEvent?.Invoke(0);
+        inputController.Default.Ability2.performed += context => abilityEvent?.Invoke(1);
+        inputController.Default.Ability3.performed += context => abilityEvent?.Invoke(2);
+        inputController.Default.Ability4.performed += context => abilityEvent?.Invoke(3);
+        inputController.Default.Ability5.performed += context => abilityEvent?.Invoke(4);
+
+        inputController.Default.Consumables1.performed += context => consumableEvent?.Invoke(0);
+        inputController.Default.Consumables2.performed += context => consumableEvent?.Invoke(1);
+    }
+    public void RefreshCurrentState()
+    {
+        states[(int)currentState].Begin();
     }
 }

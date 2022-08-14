@@ -8,14 +8,12 @@ public class Drag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     private CanvasGroup canvasGroup;
     private Canvas mainCanvas;
     private RectTransform rectTransform;
-    public Transform oldParent;
 
     private void Start()
     {
         rectTransform = GetComponent<RectTransform>();
         mainCanvas = GetComponentInParent<Canvas>();
         canvasGroup = GetComponent<CanvasGroup>();
-        oldParent = transform.parent;
     }
     public void OnBeginDrag(PointerEventData eventData)
     {

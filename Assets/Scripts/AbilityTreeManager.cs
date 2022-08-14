@@ -4,15 +4,36 @@ using UnityEngine;
 
 public class AbilityTreeManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField] private  UIStateMachine uiStateMachine;
+    [SerializeField] private AbilitySlotTree[] slotTrees;
 
-    // Update is called once per frame
-    void Update()
+    [SerializeField] private GameObject abilityTreePanel;
+
+    private void Awake()
     {
-        
+        SubscribeOnEvent();
+    }
+    private void OnEnablePanel()
+    {
+        abilityTreePanel.SetActive(true);
+        uiStateMachine.ChangeStateUI(StateUI.GameMenu);
+    }
+    private void OnDisablePanel()
+    {
+        if (abilityTreePanel.activeSelf)
+        {
+            abilityTreePanel.SetActive(false);
+            uiStateMachine.ChangeStateUI(StateUI.Default);
+        }
+    }
+    private void ChangeUIState(StateUI stateUI)
+    {
+
+    }
+    public void SubscribeOnEvent()
+    {
+        uiStateMachine.changeUIStateEvent += ChangeUIState;
+        uiStateMachine.abilityPanelEvent += OnEnablePanel;
+        uiStateMachine.exitMenuEvent += OnDisablePanel;
     }
 }

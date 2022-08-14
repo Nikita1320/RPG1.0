@@ -5,11 +5,12 @@ using UnityEngine;
 public class AbilitySlotQuickAccess : MonoBehaviour
 {
     public AbilityConteiner abilityConteiner;
-    public AbilityBase ability;
     private Character character;
+    private StateMachine stateMachine;
     //private AnimatorManager animatorManager;
 
     [SerializeField] private string nameAnimationInBaseAnimator;
+    private int indexSlot;
 
     public void AddAbility(AbilityConteiner _abilityConteiner)
     {
@@ -17,31 +18,36 @@ public class AbilitySlotQuickAccess : MonoBehaviour
         abilityConteiner.currentSlot = this;
         /*if (abilityConteiner.ability.typeAbility = AbilityType.Active)
         {
-            anmatorManager.ChangeAnimationClip(nameAnimationInBaseAnimator, abilityConteiner.ability.animationClip;
+            anmatorManager.ChangeAnimationClip(nameAnimationInBaseAnimator, abilityConteiner.ability.animationClip);
         }*/
     }
-    public void ClearSlot(bool moveToTreeCurrentAbility)
+    public void ClearSlot()
     {
-        if (moveToTreeCurrentAbility && abilityConteiner != null)
+        if (abilityConteiner && !abilityConteiner.conteinerInCoolDown)
         {
             abilityConteiner.ReturnAbilityToTree();
+            abilityConteiner = null;
         }
-        abilityConteiner = null;
     }
     public void StartAbility()
     {
-        if (abilityConteiner != null && abilityConteiner.ability.canBeUsed)
+        if (abilityConteiner && abilityConteiner.ability.typeAbility != TypeAbility.Passive && !abilityConteiner.conteinerInCoolDown)
         {
+            abilityConteiner.StartTimer();
             abilityConteiner.ability.StartAbility(character);
+            //AnimatorManager.animator.SetTrigger("AbilityIndex", indexSlot)
+            //stateMachine.ChangeState(States.Ability);
         }
     }
     public void Use()
     {
         abilityConteiner.ability.Use();
     }
-    public void Init(Character _character)
+    public void Init(Character _character, int _indexSlot)
     {
         character = _character;
+        indexSlot = _indexSlot;
+        stateMachine = _character.gameObject.GetComponent<StateMachine>();
         //animatorManager = character.gameobject.GetComponent<AnimatorManager>();
     }
 }

@@ -124,7 +124,7 @@ MonoBehaviour:
       - m_Target: {fileID: 7419713094771347801}
         m_TargetAssemblyTypeName: AbilitySlotQuickAccess, Assembly-CSharp
         m_MethodName: ClearSlot
-        m_Mode: 6
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -237,3 +237,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abilityConteiner: {fileID: 0}
+  nameAnimationInBaseAnimator: 

@@ -14,7 +14,8 @@ public class AbilityManager : MonoBehaviour
     {
         stateMachine = GetComponent<StateMachine>();
         character = GetComponent<Character>();
-        stateMachine.changeStateEvent += ChangeState;
+        stateMachine.exitStateEvent += ExitState;
+        stateMachine.startStateEvent += StartState;
         InitSlot();
     }
 
@@ -28,7 +29,15 @@ public class AbilityManager : MonoBehaviour
         currentUseAbilitySlot.Use();
     }
 
-    public void ChangeState(States _state)
+    public void ExitState(States _state)
+    {
+        if (_state == States.Default)
+        {
+            SubscribeOnAbilityEvent();
+        }
+    }
+
+    public void StartState(States _state)
     {
         if (_state == States.Default)
         {
@@ -45,7 +54,7 @@ public class AbilityManager : MonoBehaviour
     {
         for (int i = 0; i < abilitySlot.Length; i++)
         {
-            abilitySlot[i].Init(character);
+            abilitySlot[i].Init(character, i);
         }
     }
 }

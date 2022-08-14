@@ -16,7 +16,7 @@ public class Character : MonoBehaviour
 
     public float JumpPower { get { return currenJumpPower; } set { currenJumpPower *= value; } }
 
-    private float baseJerkPower = 2;
+    private float baseJerkPower = 1;
 
     private float currenJerkPower;
 
