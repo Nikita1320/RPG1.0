@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class TestAbility: AbilityBase
 {
     private Character character;
-    public override void StartAbility(Character _character)
+    public override void Begin(Character _character)
     {
         character = _character;
         //character.gameObject.GetComponent<StateMachine>().ChangeState(States.Ability);

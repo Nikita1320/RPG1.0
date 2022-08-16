@@ -8,19 +8,16 @@ public enum TypeAbility
     Passive,
     Active
 }
-public class AbilityBase : MonoBehaviour
+public abstract class AbilityBase : MonoBehaviour
 {
-    public string nameAbility;
-    public string discription;
-    public Image image;
+    [SerializeField] private string nameAbility;
+    [SerializeField] private string description;
+    [SerializeField] private Image icon;
+    [SerializeField] private TypeAbility typeAbility;
+    public string NameAbility => nameAbility;
+    public string Description => description;
+    public Image Icon => icon;
+    public TypeAbility TypeAbility => typeAbility;
 
-    public bool canBeUsed = true;
-    public float coolDown;
-
-    public AnimationClip animationClip;
-    public TypeAbility typeAbility;
-
-    public virtual void StartAbility(Character _character) { }
-    public virtual void Use() { }
-    public virtual void EndAbility() { }
+    public abstract void Begin(Character _character);
 }

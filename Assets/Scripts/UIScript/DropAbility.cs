@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -14,20 +12,17 @@ public class DropAbility : MonoBehaviour, IDropHandler
     {
         if (eventData.pointerDrag.TryGetComponent(out AbilityConteiner abilityConteiner)) //объект с компонентом drag - способность?
         {
-            if (abilityConteiner.currentSlot != null) //перемещение из дерева или из слота доступа?
+            if (abilityConteiner.currentSlot.TryGetComponent(out AbilitySlotQuickAccess dragSlot)) //перемещение из дерева или из слота доступа?
             {
-                if (dropAbilitySlot.abilityConteiner == null) //слот пуст?
+                if (dropAbilitySlot.AbilityConteinerInSlot == null) //слот пуст?
                 {
-                    AbilitySlotQuickAccess dragSlot = abilityConteiner.currentSlot;
-
                     dropAbilitySlot.AddAbility(abilityConteiner);
                     MoveToSlot(abilityConteiner.transform, transform);
-                    dragSlot.abilityConteiner = null;
+                    dragSlot.ClearSlot(false);
                 }
                 else
                 {
-                    AbilityConteiner temp = dropAbilitySlot.abilityConteiner;
-                    AbilitySlotQuickAccess dragSlot = abilityConteiner.currentSlot;
+                    AbilityConteiner temp = dropAbilitySlot.AbilityConteinerInSlot;
 
                     MoveToSlot(abilityConteiner.transform, transform);
                     dropAbilitySlot.AddAbility(abilityConteiner);
@@ -38,14 +33,14 @@ public class DropAbility : MonoBehaviour, IDropHandler
             }
             else
             {
-                if (dropAbilitySlot.abilityConteiner == null) //слот пуст?
+                if (dropAbilitySlot.AbilityConteinerInSlot == null) //слот пуст?
                 {
                     dropAbilitySlot.AddAbility(abilityConteiner);
                     MoveToSlot(abilityConteiner.transform, transform);
                 }
                 else
                 {
-                    dropAbilitySlot.ClearSlot();
+                    dropAbilitySlot.ClearSlot(true);
                     dropAbilitySlot.AddAbility(abilityConteiner);
                     MoveToSlot(abilityConteiner.transform, transform);
                 }
@@ -56,5 +51,6 @@ public class DropAbility : MonoBehaviour, IDropHandler
     {
         dragObject.SetParent(dropObject);
         dragObject.localPosition = Vector3.zero;
+        dragObject.SetAsFirstSibling();
     }
 }

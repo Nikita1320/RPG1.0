@@ -1,19 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class InventoryManager : MonoBehaviour
 {
     [SerializeField] private GameObject inventoryPanel;
     [SerializeField] private UIStateMachine uiStateMachine;
-    [SerializeField] private Character character;
-    [SerializeField] private SlotInventoryBackpack[] slotInventoryBackpacks;
-    [SerializeField] private SlotEquipment[] slotEquipment;
-    [SerializeField] private SlotConsumable[] slotConsumables;
-    [SerializeField] private SlotWepon slotWepon;
+    [SerializeField] private ItemSlotBase[] slotInventoryBackpacks;
+    [SerializeField] private EquipmentSlot[] slotEquipment;
+    [SerializeField] private ConsumableSlot[] slotConsumables;
+    [SerializeField] private WeaponSlot slotWepon;
+
+    private Character character;
 
     private void Start()
     {
+        character = GetComponent<Character>();
         InitSlots();
     }
     private void OnEnablePanel()
@@ -31,7 +31,7 @@ public class InventoryManager : MonoBehaviour
     }
     private void ChangeUIState(StateUI stateUI)
     {
-
+        
     }
     public void SubscribeOnEvent()
     {
@@ -43,12 +43,12 @@ public class InventoryManager : MonoBehaviour
     {
         for (int i = 0; i < slotEquipment.Length; i++)
         {
-            //slotEquipment.Init();
+            slotEquipment[i].Init(character);
         }
         for (int i = 0; i < slotConsumables.Length; i++)
         {
-            //slotConsumables.Init(i);
+            slotConsumables[i].Init(character, i);
         }
-        //slotWepon.Init();
+        slotWepon.Init(character);
     }
 }

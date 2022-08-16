@@ -4,50 +4,82 @@ using UnityEngine;
 
 public class AbilitySlotQuickAccess : MonoBehaviour
 {
-    public AbilityConteiner abilityConteiner;
-    private Character character;
-    private StateMachine stateMachine;
-    //private AnimatorManager animatorManager;
-
     [SerializeField] private string nameAnimationInBaseAnimator;
-    private int indexSlot;
 
+    private AbilityConteiner abilityConteiner;
+    private AbilityBase ability;
+
+    private int indexSlot;
+    private StateMachine stateMachine;
+    private AnimatorManager animatorManager;
+    private Character character;
+    private CoolDown coolDown;
+    public AbilityConteiner AbilityConteinerInSlot => abilityConteiner;
+
+    private void Start()
+    {
+        coolDown = GetComponent<CoolDown>();
+        coolDown.endCoolDownEvent += EnableDragDrop;
+    }
     public void AddAbility(AbilityConteiner _abilityConteiner)
     {
         abilityConteiner = _abilityConteiner;
         abilityConteiner.currentSlot = this;
-        /*if (abilityConteiner.ability.typeAbility = AbilityType.Active)
+
+        ability = abilityConteiner.gameObject.GetComponent<AbilityBase>();
+
+        if (ability.TypeAbility == TypeAbility.Active)
         {
-            anmatorManager.ChangeAnimationClip(nameAnimationInBaseAnimator, abilityConteiner.ability.animationClip);
-        }*/
+            animatorManager.ChangeAnimation(nameAnimationInBaseAnimator, ability.GetComponent<ActiveAbilityBase>().Animation);
+        }
+        else
+        {
+            ability.Begin(character);
+        }
     }
-    public void ClearSlot()
+    public void ClearSlot(bool returnAbilityToTree)
     {
-        if (abilityConteiner && !abilityConteiner.conteinerInCoolDown)
+        if (abilityConteiner && !coolDown.TimerIsRun)
         {
-            abilityConteiner.ReturnAbilityToTree();
+            if (returnAbilityToTree)
+            {
+                abilityConteiner.ReturnAbilityToTree();
+                if (ability.TypeAbility == TypeAbility.Passive)
+                {
+                    ability.GetComponent<PassiveAbilityBase>().EndAbility();
+                }
+            }
             abilityConteiner = null;
         }
     }
     public void StartAbility()
     {
-        if (abilityConteiner && abilityConteiner.ability.typeAbility != TypeAbility.Passive && !abilityConteiner.conteinerInCoolDown)
+        if (abilityConteiner && ability.TypeAbility == TypeAbility.Active && !coolDown.TimerIsRun)
         {
-            abilityConteiner.StartTimer();
-            abilityConteiner.ability.StartAbility(character);
-            //AnimatorManager.animator.SetTrigger("AbilityIndex", indexSlot)
-            //stateMachine.ChangeState(States.Ability);
+            ability.Begin(character);
+            coolDown.StartTimer(ability.GetComponent<ActiveAbilityBase>().CoolDown);
+            DisableDragDrop();
         }
     }
     public void Use()
     {
-        abilityConteiner.ability.Use();
+        ability.GetComponent<ActiveAbilityBase>().Use();
     }
-    public void Init(Character _character, int _indexSlot)
+    public void Init(Character _character, int _indexSlot, StateMachine _stateMachine, AnimatorManager _animatorManager)
     {
         character = _character;
         indexSlot = _indexSlot;
-        stateMachine = _character.gameObject.GetComponent<StateMachine>();
-        //animatorManager = character.gameobject.GetComponent<AnimatorManager>();
+        stateMachine = _stateMachine;
+        animatorManager = _animatorManager;
+    }
+    private void DisableDragDrop()
+    {
+        GetComponent<DropAbility>().enabled = false;
+        abilityConteiner.gameObject.GetComponent<Drag>().enabled = false;
+    }
+    private void EnableDragDrop()
+    {
+        GetComponent<DropAbility>().enabled = true;
+        abilityConteiner.gameObject.GetComponent<Drag>().enabled = true;
     }
 }

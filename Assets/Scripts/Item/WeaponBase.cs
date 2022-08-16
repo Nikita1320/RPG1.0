@@ -4,7 +4,13 @@ using UnityEngine;
 
 public abstract class WeaponBase : ItemBase
 {
-    public AnimationClip[] animationClips;
-    public Vector3[] positionsCheckEnemy;
-    public float[] radiusCheckEnemy;
+    [SerializeField] private AnimationClip[] animationClips;
+    [SerializeField] private Vector3[] positionsCheckEnemy;
+    [SerializeField] private float[] radiusCheckEnemy;
+    public AnimationClip[] AnimationClips => animationClips;
+    public Vector3[] PositionsCheckEnemy => positionsCheckEnemy;
+    public float[] RadiusCheckEnemy => radiusCheckEnemy;
+
+    public abstract void ToClothe(Character character);
+    public abstract void TakeOff();
 }

@@ -9,13 +9,14 @@ public class AbilityManager : MonoBehaviour
 
     private Character character;
     private StateMachine stateMachine;
+    private AnimatorManager animatorManager;
 
     private void Start()
     {
         stateMachine = GetComponent<StateMachine>();
         character = GetComponent<Character>();
-        stateMachine.exitStateEvent += ExitState;
-        stateMachine.startStateEvent += StartState;
+        animatorManager = GetComponent<AnimatorManager>();
+        SubscribeOnEvent();
         InitSlot();
     }
 
@@ -31,22 +32,18 @@ public class AbilityManager : MonoBehaviour
 
     public void ExitState(States _state)
     {
-        if (_state == States.Default)
-        {
-            SubscribeOnAbilityEvent();
-        }
+
     }
 
     public void StartState(States _state)
     {
-        if (_state == States.Default)
-        {
-            SubscribeOnAbilityEvent();
-        }
+
     }
 
-    public void SubscribeOnAbilityEvent()
+    public void SubscribeOnEvent()
     {
+        stateMachine.exitStateEvent += ExitState;
+        stateMachine.startStateEvent += StartState;
         stateMachine.abilityEvent += StartAbility;
     }
 
@@ -54,7 +51,7 @@ public class AbilityManager : MonoBehaviour
     {
         for (int i = 0; i < abilitySlot.Length; i++)
         {
-            abilitySlot[i].Init(character, i);
+            abilitySlot[i].Init(character, i, stateMachine, animatorManager);
         }
     }
 }

@@ -2,17 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponSlot : MonoBehaviour
+public class WeaponSlot : ItemSlotBase
 {
-    // Start is called before the first frame update
-    void Start()
+    private Character character;
+    public override void AddItem(ItemBase _item)
     {
-        
+        Item = _item;
+        Item.currentSlot = this;
+        IsEmpty = false;
     }
-
-    // Update is called once per frame
-    void Update()
+    public override void RemoveItem()
     {
-        
+        Item = null;
+        IsEmpty = true;
+    }
+    public void Init(Character _character)
+    {
+        character = _character;
     }
 }
