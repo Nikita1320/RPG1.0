@@ -1,18 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AbilitySlotQuickAccess : MonoBehaviour
 {
     [SerializeField] private string nameAnimationInBaseAnimator;
 
-    private AbilityConteiner abilityConteiner;
+    [SerializeField]private AbilityConteiner abilityConteiner;
     private AbilityBase ability;
 
     private int indexSlot;
     private StateMachine stateMachine;
     private AnimatorManager animatorManager;
-    private Character character;
     private CoolDown coolDown;
     public AbilityConteiner AbilityConteinerInSlot => abilityConteiner;
 
@@ -24,18 +21,17 @@ public class AbilitySlotQuickAccess : MonoBehaviour
     public void AddAbility(AbilityConteiner _abilityConteiner)
     {
         abilityConteiner = _abilityConteiner;
-        abilityConteiner.currentSlot = this;
 
         ability = abilityConteiner.gameObject.GetComponent<AbilityBase>();
 
-        if (ability.TypeAbility == TypeAbility.Active)
+        /*if (ability.TypeAbility == TypeAbility.Active)
         {
             animatorManager.ChangeAnimation(nameAnimationInBaseAnimator, ability.GetComponent<ActiveAbilityBase>().Animation);
         }
         else
         {
-            ability.Begin(character);
-        }
+            ability.Begin(stateMachine.gameObject);
+        }*/
     }
     public void ClearSlot(bool returnAbilityToTree)
     {
@@ -56,7 +52,7 @@ public class AbilitySlotQuickAccess : MonoBehaviour
     {
         if (abilityConteiner && ability.TypeAbility == TypeAbility.Active && !coolDown.TimerIsRun)
         {
-            ability.Begin(character);
+            ability.Begin(stateMachine.gameObject);
             coolDown.StartTimer(ability.GetComponent<ActiveAbilityBase>().CoolDown);
             DisableDragDrop();
         }
@@ -65,9 +61,8 @@ public class AbilitySlotQuickAccess : MonoBehaviour
     {
         ability.GetComponent<ActiveAbilityBase>().Use();
     }
-    public void Init(Character _character, int _indexSlot, StateMachine _stateMachine, AnimatorManager _animatorManager)
+    public void Init(int _indexSlot, StateMachine _stateMachine, AnimatorManager _animatorManager)
     {
-        character = _character;
         indexSlot = _indexSlot;
         stateMachine = _stateMachine;
         animatorManager = _animatorManager;

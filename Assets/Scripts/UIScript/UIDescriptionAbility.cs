@@ -16,9 +16,9 @@ public class UIDescriptionAbility : MonoBehaviour, IPointerEnterHandler,IPointer
     private void Start()
     {
         ability = GetComponent<AbilityBase>();
-        nameAbility.text = ability.name;
-        description.text = ability.discription;
-        type.text = ability.typeAbility.ToString();
+        nameAbility.text = ability.NameAbility;
+        description.text = ability.Description;
+        type.text = ability.TypeAbility.ToString();
     }
 
     public void OnPointerEnter(PointerEventData eventData)

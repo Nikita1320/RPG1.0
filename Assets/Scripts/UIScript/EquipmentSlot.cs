@@ -4,11 +4,10 @@ using UnityEngine;
 
 public class EquipmentSlot : ItemSlotBase
 {
-    private Character character;
+    private GameObject character;
     public override void AddItem(ItemBase _item)
     {
         Item = _item;
-        Item.currentSlot = this;
         IsEmpty = false;
     }
     public override void RemoveItem()
@@ -16,7 +15,7 @@ public class EquipmentSlot : ItemSlotBase
         Item = null;
         IsEmpty = true;
     }
-    public void Init(Character _character)
+    public void Init(GameObject _character)
     {
         character = _character;
     }

@@ -62,14 +62,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.392}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 3
+  m_Type: 1
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -92,6 +92,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   containerPrefab: {fileID: 0}
   lvlAccess: 0
+  icon: {fileID: 0}
+  text: {fileID: 0}
 --- !u!1001 &1416138166426936758
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -191,10 +193,46 @@ PrefabInstance:
       propertyPath: m_Name
       value: AbilityContainer
       objectReference: {fileID: 0}
+    - target: {fileID: 2623132971528619125, guid: 5c1a73001d0cffe48b617c22d61d51a0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3255895272827256962, guid: 5c1a73001d0cffe48b617c22d61d51a0, type: 3}
+      propertyPath: descriptionPanel
+      value: 
+      objectReference: {fileID: 3059531464696642902}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5c1a73001d0cffe48b617c22d61d51a0, type: 3}
+--- !u!1 &3059531464696642902 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4166534996298799328, guid: 5c1a73001d0cffe48b617c22d61d51a0, type: 3}
+  m_PrefabInstance: {fileID: 1416138166426936758}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &4017245652224582082 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2623132971528619124, guid: 5c1a73001d0cffe48b617c22d61d51a0, type: 3}
   m_PrefabInstance: {fileID: 1416138166426936758}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &4017245652224582083 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2623132971528619125, guid: 5c1a73001d0cffe48b617c22d61d51a0, type: 3}
+  m_PrefabInstance: {fileID: 1416138166426936758}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1299214741
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4017245652224582083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed7af96d71b3df24da12912f9d28722e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nameAbility: TestName
+  description: TestDescription
+  icon: {fileID: 0}
+  typeAbility: 1
+  coolDown: 0
+  animationClip: {fileID: 0}

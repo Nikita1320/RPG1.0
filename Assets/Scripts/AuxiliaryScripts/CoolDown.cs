@@ -5,13 +5,14 @@ using UnityEngine.UI;
 
 public class CoolDown : MonoBehaviour
 {
-    public delegate void EndCoolDownEvent();
-    public EndCoolDownEvent endCoolDownEvent;
     [SerializeField]private Image coolDownImage;
-    private float tick;
     private float coolDown;
     private float tickImageAmount;
     private Coroutine timer;
+
+    public delegate void EndCoolDownEvent();
+    public EndCoolDownEvent endCoolDownEvent;
+    
     public bool TimerIsRun { get; private set; }
     public void StartTimer(float _coolDown)
     {
@@ -23,13 +24,12 @@ public class CoolDown : MonoBehaviour
     }
     IEnumerator Timer()
     {
-        float i = coolDown;
         while (true)
         {
             yield return new WaitForSeconds(1);
-            i--;
+            coolDown--;
             UpdateUI();
-            if (i <= 0)
+            if (coolDown <= 0)
             {
                 EndTimer();
             }

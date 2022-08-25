@@ -12,8 +12,8 @@ public class AbilitySlotTree : MonoBehaviour
 
     private void Start()
     {
-        icon.sprite = containerPrefab.GetComponent<AbilityBase>().Icon.sprite;
-        text.text = $"{lvlAccess} lvl";
+        //icon.sprite = containerPrefab.GetComponent<AbilityBase>().Icon.sprite;
+        //text.text = $"{lvlAccess} lvl";
         //character.levelUp += OpenAbility;
     }
 

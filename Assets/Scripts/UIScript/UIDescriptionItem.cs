@@ -16,8 +16,8 @@ public class UIDescriptionItem : MonoBehaviour, IPointerEnterHandler, IPointerEx
     private void Start()
     {
         item = GetComponent<ItemBase>();
-        nameItem.text = item.name;
-        description.text = item.description;
+        nameItem.text = item.NameItem;
+        description.text = item.Description;
     }
 
     public void OnPointerEnter(PointerEventData eventData)

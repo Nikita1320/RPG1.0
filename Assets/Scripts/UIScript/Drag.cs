@@ -8,6 +8,7 @@ public class Drag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     private CanvasGroup canvasGroup;
     private Canvas mainCanvas;
     private RectTransform rectTransform;
+    public GameObject OldParent { get; private set; }
 
     private void Start()
     {
@@ -17,6 +18,7 @@ public class Drag : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDragHand
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
+        OldParent = transform.parent.gameObject;
         canvasGroup.blocksRaycasts = false;
     }
 

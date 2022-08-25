@@ -89,6 +89,7 @@ GameObject:
   - component: {fileID: 8708851012625041451}
   - component: {fileID: 4560159573122863846}
   - component: {fileID: 806985623670754952}
+  - component: {fileID: 5267777015037086798}
   m_Layer: 5
   m_Name: AbilitySlotQuickAccess
   m_TagString: Untagged
@@ -180,8 +181,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faf476ca96f5bd74aa57bd4db69af4e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  abilityConteiner: {fileID: 0}
   nameAnimationInBaseAnimator: 
+--- !u!114 &5267777015037086798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8708851012625041453}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e9d24318a6c0a4142afc9e63bb261350, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coolDownImage: {fileID: 2123166672984817109}
 --- !u!1 &8786430425307688938
 GameObject:
   m_ObjectHideFlags: 0

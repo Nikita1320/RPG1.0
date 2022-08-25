@@ -10,7 +10,7 @@ public abstract class ConsumablesBase : ItemBase
     public int MaxCount => maxCount;
     public int CurrentCount { get => currentCount; set { currentCount += value; } }
 
-    public abstract void ToClothe(Character character);
+    public abstract void ToClothe(GameObject character);
     public abstract void TakeOff();
     public abstract void Use();
 }

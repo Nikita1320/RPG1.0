@@ -11,6 +11,6 @@ public abstract class WeaponBase : ItemBase
     public Vector3[] PositionsCheckEnemy => positionsCheckEnemy;
     public float[] RadiusCheckEnemy => radiusCheckEnemy;
 
-    public abstract void ToClothe(Character character);
+    public abstract void ToClothe(GameObject character);
     public abstract void TakeOff();
 }

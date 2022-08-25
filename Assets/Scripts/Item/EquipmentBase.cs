@@ -5,6 +5,6 @@ using UnityEngine;
 
 public abstract class EquipmentBase : ItemBase
 {
-    public abstract void ToClothe(Character character);
+    public abstract void ToClothe(GameObject character);
     public abstract void TakeOff();
 }

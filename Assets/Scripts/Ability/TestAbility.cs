@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class TestAbility: AbilityBase
+public class TestAbility: ActiveAbilityBase
 {
-    private Character character;
-    public override void Begin(Character _character)
+    private GameObject character;
+    public override void Begin(GameObject _character)
     {
         character = _character;
         //character.gameObject.GetComponent<StateMachine>().ChangeState(States.Ability);
@@ -15,9 +15,5 @@ public class TestAbility: AbilityBase
     public override void Use() 
     {
 
-    }
-    public override void EndAbility()
-    {
-        //character.gameObject.GetComponent<StateMachine>().ChangeState(States.Default);
     }
 }

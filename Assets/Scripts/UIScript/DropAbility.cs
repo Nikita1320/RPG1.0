@@ -10,10 +10,12 @@ public class DropAbility : MonoBehaviour, IDropHandler
     }
     public void OnDrop(PointerEventData eventData)
     {
-        if (eventData.pointerDrag.TryGetComponent(out AbilityConteiner abilityConteiner)) //объект с компонентом drag - способность?
+        Drag drag = eventData.pointerDrag.GetComponent<Drag>();
+        if (drag.gameObject.TryGetComponent(out AbilityConteiner abilityConteiner)) //объект с компонентом drag - способность?
         {
-            if (abilityConteiner.currentSlot.TryGetComponent(out AbilitySlotQuickAccess dragSlot)) //перемещение из дерева или из слота доступа?
+            if (drag.OldParent.TryGetComponent(out AbilitySlotQuickAccess dragSlot)) //перемещение из дерева или из слота доступа?
             {
+                //AbilitySlotQuickAccess dragSlot = abilityConteiner.currentSlot.GetComponent<AbilitySlotQuickAccess>();
                 if (dropAbilitySlot.AbilityConteinerInSlot == null) //слот пуст?
                 {
                     dropAbilitySlot.AddAbility(abilityConteiner);

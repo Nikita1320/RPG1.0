@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5cc8e8d3c8f91f4cbce1e0ec6754b2b, type: 3}
+  m_Name: TestEffectData
+  m_EditorClassIdentifier: 
+  nameEffect: Test
+  description: TestDescription
+  icon: {fileID: 21300000, guid: 8106300eacaecd54796d4d5d6084f562, type: 3}
+  typeInfluence: 0
+  typeLifeCycle: 0
+  canBeRemoved: 0

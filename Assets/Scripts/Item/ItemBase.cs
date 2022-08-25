@@ -10,8 +10,12 @@ public enum ItemType
 }
 public abstract class ItemBase : MonoBehaviour
 {
-    public string nameItem;
-    public string description;
-    public ItemType itemType;
-    public ItemSlotBase currentSlot;
+    [SerializeField] private string nameItem;
+    [SerializeField] private string description;
+    [SerializeField] private Sprite icon;
+    [SerializeField] private ItemType itemType;
+    public string NameItem => nameItem;
+    public string Description => description;
+    public Sprite Icon => icon;
+    public ItemType TypeItem => itemType;
 }

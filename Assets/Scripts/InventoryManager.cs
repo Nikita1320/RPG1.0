@@ -9,11 +9,8 @@ public class InventoryManager : MonoBehaviour
     [SerializeField] private ConsumableSlot[] slotConsumables;
     [SerializeField] private WeaponSlot slotWepon;
 
-    private Character character;
-
     private void Start()
     {
-        character = GetComponent<Character>();
         InitSlots();
     }
     private void OnEnablePanel()
@@ -43,12 +40,12 @@ public class InventoryManager : MonoBehaviour
     {
         for (int i = 0; i < slotEquipment.Length; i++)
         {
-            slotEquipment[i].Init(character);
+            slotEquipment[i].Init(gameObject);
         }
         for (int i = 0; i < slotConsumables.Length; i++)
         {
-            slotConsumables[i].Init(character, i);
+            slotConsumables[i].Init(gameObject, i);
         }
-        slotWepon.Init(character);
+        slotWepon.Init(gameObject);
     }
 }

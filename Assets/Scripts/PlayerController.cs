@@ -1,34 +1,37 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
 public class PlayerController : MonoBehaviour
 {
-    public Rigidbody rigidbody;
+    public delegate void ChangeMoveSpeed(float moveSpeed);
+    public ChangeMoveSpeed changeMoveSpeedEvent;
+
+    public Rigidbody rb;
     private CapsuleCollider capsuleCollider;
     private AnimatorManager animatorManager;
-    //public AnimatorOverrideController overrideAnimator;
-    private Character character;
     private StateMachine stateMachine;
-    private States currentState;
 
+    [SerializeField] private float baseMoveSpeed = 5;
+    private float valueOfChangeMoveSpeed;
+    private float ñoefficientOfChangeMoveSpeed = 1;
 
-    public bool isground = true;
+    [SerializeField] private float baseJumpPower = 5;
+    [SerializeField] private float baseJerkPower = 1;
     public bool IsGrounded
     {
         get
         {
             Vector3 bottomCenterPoint = new Vector3(capsuleCollider.bounds.center.x, capsuleCollider.bounds.min.y, capsuleCollider.bounds.center.z);
-            //return Physics.CheckCapsule(collider.bounds.center, bottomCenterPoint, collider.bounds.size.x / 2 * 0.1f, layerMask);
             return Physics.CheckSphere(bottomCenterPoint, 0.15f, 1);
         }
     }
+    public float CurrentMoveSpeed { get { return (baseMoveSpeed + ValueOfChangeMoveSpeed) * ÑoefficientOfChangeMoveSpeed; } }
+    public float ValueOfChangeMoveSpeed { private get { return valueOfChangeMoveSpeed; } set { valueOfChangeMoveSpeed += value; changeMoveSpeedEvent(CurrentMoveSpeed); } }
+    public float ÑoefficientOfChangeMoveSpeed { private get { return ñoefficientOfChangeMoveSpeed; } set { ñoefficientOfChangeMoveSpeed *= value; changeMoveSpeedEvent(CurrentMoveSpeed); } }
 
     private void Awake()
     {
-        rigidbody = GetComponent<Rigidbody>();
-        character = GetComponent<Character>();
+        rb = GetComponent<Rigidbody>();
         stateMachine = GetComponent<StateMachine>();
         capsuleCollider = GetComponent<CapsuleCollider>();
         animatorManager = GetComponent<AnimatorManager>();
@@ -45,7 +48,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!IsGrounded)
         {
-            if (currentState != States.Disable && currentState != States.InAir)
+            if (stateMachine.currentState == States.Default)
             {
                 stateMachine.ChangeState(States.InAir);
                 animatorManager.Animator.SetBool("InAir", true);
@@ -53,45 +56,44 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if (currentState == States.InAir)
+            if (stateMachine.currentState == States.InAir)
             {
                 Debug.Log("Transit in DefaultUpdate");
                 stateMachine.ChangeState(States.Default);
                 animatorManager.Animator.SetBool("InAir", false);
             }
         }
-        isground = IsGrounded;
     }
 
     public void Move(Vector2 direction)
     {
-        Vector2 moveDir = direction * character.MoveSpeed;
+        Vector2 moveDir = direction * CurrentMoveSpeed;
         if (direction != Vector2.zero)
         {
-            rigidbody.velocity = new Vector3(moveDir.x, rigidbody.velocity.y, moveDir.y);
+            rb.velocity = new Vector3(moveDir.x, rb.velocity.y, moveDir.y);
             animatorManager.Animator.SetBool("Run", true);
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(new Vector3(moveDir.x, 0, moveDir.y)), 0.25f);
         }
         else
         {
-            rigidbody.velocity = new Vector3(0, rigidbody.velocity.y, 0);
+            rb.velocity = new Vector3(0, rb.velocity.y, 0);
             animatorManager.Animator.SetBool("Run", false);
         }
     }
 
     public void Jump()
     {
-        rigidbody.AddForce(Vector3.up * character.JumpPower, ForceMode.Impulse);
+        rb.AddForce(Vector3.up * baseJumpPower, ForceMode.Impulse);
         animatorManager.Animator.SetTrigger("Jump");
     }
 
     public void Jerk()
     {
-        Vector3 directionJerk = new Vector3(rigidbody.velocity.x, 0, rigidbody.velocity.z);
+        Vector3 directionJerk = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         if (directionJerk != Vector3.zero)
         {
             stateMachine.ChangeState(States.Disable);
-            rigidbody.AddForce(directionJerk * character.JerkPower, ForceMode.Impulse);
+            rb.AddForce(directionJerk * baseJerkPower, ForceMode.Impulse);
             Debug.Log(directionJerk);
             animatorManager.Animator.SetTrigger("Jerk");
         }
@@ -119,7 +121,7 @@ public class PlayerController : MonoBehaviour
     }
     public void StartState(States _state)
     {
-        currentState = _state;
+
     }
 
     public void SubscribeOnEvent()

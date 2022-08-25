@@ -4,17 +4,24 @@ using UnityEngine;
 
 public class AbilityManager : MonoBehaviour
 {
+    public delegate void ChangeCooldownReduction(float CooldownReduction);
+    public ChangeCooldownReduction changeCooldownReductionEvent;
+    
+    private StateMachine stateMachine;
+    private AnimatorManager animatorManager;
+
     [SerializeField] private AbilitySlotQuickAccess[] abilitySlot;
     private AbilitySlotQuickAccess currentUseAbilitySlot;
 
-    private Character character;
-    private StateMachine stateMachine;
-    private AnimatorManager animatorManager;
+    [SerializeField] private float baseCooldownReduction = 1;
+    private float ñoefficientOfChangeCooldownReduction = 1;
+
+    public float CurrentCooldownReduction { get { return baseCooldownReduction * ÑoefficientOfChangeCooldownReduction; } }
+    public float ÑoefficientOfChangeCooldownReduction { private get { return ñoefficientOfChangeCooldownReduction; } set { ñoefficientOfChangeCooldownReduction *= value; changeCooldownReductionEvent(CurrentCooldownReduction); } }
 
     private void Start()
     {
         stateMachine = GetComponent<StateMachine>();
-        character = GetComponent<Character>();
         animatorManager = GetComponent<AnimatorManager>();
         SubscribeOnEvent();
         InitSlot();
@@ -51,7 +58,7 @@ public class AbilityManager : MonoBehaviour
     {
         for (int i = 0; i < abilitySlot.Length; i++)
         {
-            abilitySlot[i].Init(character, i, stateMachine, animatorManager);
+            abilitySlot[i].Init(i, stateMachine, animatorManager);
         }
     }
 }
