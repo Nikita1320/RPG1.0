@@ -2,22 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DefaultStateInput : BaseStateInput
+public class DefaultStateInput : BaseStateInput<InputActions, States>
 {
-    private InputController inputController;
+    private InputActions inputActions;
     public override void Begin()
     {
-        inputController.Default.Enable();
-        inputController.InBlock.Enable();
+        inputActions.Default.Enable();
+        inputActions.InBlock.Enable();
     }
 
-    public override void Exit()
+    public override void Exit(States nextState)
     {
-        inputController.Default.Disable();
+        if (nextState != States.Block)
+        {
+            inputActions.InBlock.Disable();
+        }
+        inputActions.Default.Disable();
     }
 
-    public override void Init(InputController _inputController)
+    public override void Init(InputActions _inputActions)
     {
-        inputController = _inputController;
+        inputActions = _inputActions;
     }
 }

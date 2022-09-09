@@ -1,22 +1,18 @@
 using UnityEngine;
 
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : ControllerBase<Vector2>
 {
-    public delegate void ChangeMoveSpeed(float moveSpeed);
-    public ChangeMoveSpeed changeMoveSpeedEvent;
-
-    public Rigidbody rb;
+    private Rigidbody rb;
     private CapsuleCollider capsuleCollider;
-    private AnimatorManager animatorManager;
-    private StateMachine stateMachine;
-
-    [SerializeField] private float baseMoveSpeed = 5;
-    private float valueOfChangeMoveSpeed;
-    private float ñoefficientOfChangeMoveSpeed = 1;
+    private Animator animator;
+    private InputController inputController;
+    private Health health;
 
     [SerializeField] private float baseJumpPower = 5;
     [SerializeField] private float baseJerkPower = 1;
+
+    private bool inBlock = false;
     public bool IsGrounded
     {
         get
@@ -25,18 +21,14 @@ public class PlayerController : MonoBehaviour
             return Physics.CheckSphere(bottomCenterPoint, 0.15f, 1);
         }
     }
-    public float CurrentMoveSpeed { get { return (baseMoveSpeed + ValueOfChangeMoveSpeed) * ÑoefficientOfChangeMoveSpeed; } }
-    public float ValueOfChangeMoveSpeed { private get { return valueOfChangeMoveSpeed; } set { valueOfChangeMoveSpeed += value; changeMoveSpeedEvent(CurrentMoveSpeed); } }
-    public float ÑoefficientOfChangeMoveSpeed { private get { return ñoefficientOfChangeMoveSpeed; } set { ñoefficientOfChangeMoveSpeed *= value; changeMoveSpeedEvent(CurrentMoveSpeed); } }
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
-        stateMachine = GetComponent<StateMachine>();
+        inputController = GetComponent<InputController>();
         capsuleCollider = GetComponent<CapsuleCollider>();
-        animatorManager = GetComponent<AnimatorManager>();
-        stateMachine.startStateEvent += StartState;
-        stateMachine.exitStateEvent += ExitState;
+        animator = GetComponent<Animator>();
+        health = GetComponent<Health>();
     }
 
     private void Start()
@@ -48,88 +40,122 @@ public class PlayerController : MonoBehaviour
     {
         if (!IsGrounded)
         {
-            if (stateMachine.currentState == States.Default)
+            if (inputController.CurrentState == States.Default)
             {
-                stateMachine.ChangeState(States.InAir);
-                animatorManager.Animator.SetBool("InAir", true);
+                inputController.ChangeState(States.InAir);
+                animator.SetBool("InAir", true);
             }
         }
         else
         {
-            if (stateMachine.currentState == States.InAir)
+            if (inputController.CurrentState == States.InAir)
             {
                 Debug.Log("Transit in DefaultUpdate");
-                stateMachine.ChangeState(States.Default);
-                animatorManager.Animator.SetBool("InAir", false);
+                inputController.ChangeState(States.Default);
+                animator.SetBool("InAir", false);
             }
         }
     }
 
-    public void Move(Vector2 direction)
+    public override void Move(Vector2 direction)
     {
         Vector2 moveDir = direction * CurrentMoveSpeed;
         if (direction != Vector2.zero)
         {
             rb.velocity = new Vector3(moveDir.x, rb.velocity.y, moveDir.y);
-            animatorManager.Animator.SetBool("Run", true);
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(new Vector3(moveDir.x, 0, moveDir.y)), 0.25f);
+            animator.SetBool("Run", true);
+            Rotate(moveDir);
         }
         else
         {
             rb.velocity = new Vector3(0, rb.velocity.y, 0);
-            animatorManager.Animator.SetBool("Run", false);
+            animator.SetBool("Run", false);
         }
     }
-
-    public void Jump()
+    public override void Rotate(Vector2 direction)
     {
-        rb.AddForce(Vector3.up * baseJumpPower, ForceMode.Impulse);
-        animatorManager.Animator.SetTrigger("Jump");
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(new Vector3(direction.x, 0, direction.y)), CurrentRotationSpeed);
     }
 
-    public void Jerk()
+    private void Jump()
+    {
+        rb.AddForce(Vector3.up * baseJumpPower, ForceMode.Impulse);
+        animator.SetTrigger("Jump");
+    }
+
+    private void Jerk()
     {
         Vector3 directionJerk = new Vector3(rb.velocity.x, 0, rb.velocity.z);
         if (directionJerk != Vector3.zero)
         {
-            stateMachine.ChangeState(States.Disable);
+            inputController.ChangeState(States.Disable);
             rb.AddForce(directionJerk * baseJerkPower, ForceMode.Impulse);
             Debug.Log(directionJerk);
-            animatorManager.Animator.SetTrigger("Jerk");
+            animator.SetTrigger("Jerk");
         }
     }
     public void ExitJerk()
     {
-        stateMachine.ChangeState(States.Default);
+        inputController.ChangeState(States.Default);
     }
 
-    public void BeginBlock()
+    private void BeginBlock()
     {
-        stateMachine.ChangeState(States.Block);
-        animatorManager.Animator.SetBool("Block", true);
+        inputController.ChangeState(States.Block);
+        Block(true);
+        animator.SetBool("Block", true);
     }
 
-    public void ExitBlock()
+    private void ExitBlock()
     {
-        animatorManager.Animator.SetBool("Block", false);
-        stateMachine.ChangeState(States.Default);
+        animator.SetBool("Block", false);
+        Block(false);
+        inputController.ChangeState(States.Default);
     }
-
-    public void ExitState(States _state)
+    private void Block(bool isEntryBlock)
     {
-
+        if (isEntryBlock)
+        {
+            canBeStunned = false;
+            health.ÑoefficientOfChangeArmor = 1.1f;
+        }
+        else
+        {
+            canBeStunned = true;
+            health.ÑoefficientOfChangeArmor = 1 / 1.1f;
+        }
+        inBlock = isEntryBlock;
     }
-    public void StartState(States _state)
+    public override void EntryStun()
     {
-
+        Debug.Log("IStun");
+        animator.SetBool("Stun", true);
+        inputController.ChangeState(States.Disable);
     }
-
+    public override void ExitStun()
+    {
+        inputController.ChangeState(States.Default);
+        animator.SetBool("Stun", false);
+    }
     public void SubscribeOnEvent()
     {
-        stateMachine.jumpEvent += Jump;
-        stateMachine.jerkEvent += Jerk;
-        stateMachine.blockEvent += BeginBlock;
-        stateMachine.exitBlockEvent += ExitBlock;
-        stateMachine.moveEvent += Move;
+        inputController.jumpEvent += Jump;
+        inputController.jerkEvent += Jerk;
+        inputController.blockEvent += BeginBlock;
+        inputController.exitBlockEvent += ExitBlock;
+        inputController.moveEvent += Move;
+        inputController.startStateEvent += StartState;
+        inputController.exitStateEvent += ExitState;
+    }
+    private void StartState(States _state)
+    {
+
+    }
+    private void ExitState(States _state)
+    {
+        if (_state == States.Block && inBlock == true)
+        {
+            Block(false);
+        }
     }
 }

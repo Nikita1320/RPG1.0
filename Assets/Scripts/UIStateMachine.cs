@@ -10,11 +10,12 @@ public enum StateUI
 }
 public class UIStateMachine : MonoBehaviour
 {
-    [SerializeField] private StateMachine stateMachine;
-    private List<BaseStateInput> statesUI = new List<BaseStateInput>();
-    private BaseStateInput currentStateUI;
+    [SerializeField] private InputController inputController;
+    private List<BaseStateInput<InputActionsUI, StateUI>> statesUI = new List<BaseStateInput<InputActionsUI, StateUI>>();
+    private BaseStateInput<InputActionsUI, StateUI> currentStateUI;
 
-    public InputController inputController;
+    public InputActions inputs;
+    private InputActionsUI inputActionsUI;
 
     public delegate void ChangeUIStateEvent(StateUI _stateUI);
     public ChangeUIStateEvent changeUIStateEvent;
@@ -33,32 +34,33 @@ public class UIStateMachine : MonoBehaviour
 
     private void Start()
     {
-        inputController = stateMachine.inputController;
+        inputs = inputController.Inputs;
+        inputActionsUI = new InputActionsUI();
         InitEvent();
         InitStates();
     }
 
-    public void ChangeStateUI(StateUI stateUI)
+    public void ChangeStateUI(StateUI nextStateUI)
     {
-        if (stateUI == StateUI.Default)
+        if (nextStateUI == StateUI.Default)
         {
             if (currentStateUI != null)
             {
-                stateMachine.RefreshCurrentState();
+                inputController.RefreshCurrentState();
             }
         }
         else
         {
-            inputController.Disable();
+            inputs.Disable();
         }
 
         if (currentStateUI != null)
         {
-            currentStateUI.Exit();
+            currentStateUI.Exit(nextStateUI);
         }
-        currentStateUI = statesUI[(int)stateUI];
+        currentStateUI = statesUI[(int)nextStateUI];
         currentStateUI.Begin();
-        changeUIStateEvent(stateUI);
+        changeUIStateEvent(nextStateUI);
     }
     private void InitStates()
     {
@@ -66,16 +68,16 @@ public class UIStateMachine : MonoBehaviour
         statesUI.Add(new InGameMenuState());
         for (int i = 0; i < statesUI.Count; i++)
         {
-            statesUI[i].Init(inputController);
+            statesUI[i].Init(inputActionsUI);
         }
         ChangeStateUI(StateUI.Default);
     }
-    public void InitEvent()
+    private void InitEvent()
     {
-        inputController.UIDefaultInput.AbilityMenu.performed += context => abilityPanelEvent?.Invoke();
-        inputController.UIDefaultInput.Invent.performed += context => inventoryPanelEvent?.Invoke();
-        inputController.UIDefaultInput.MainMenu.performed += context => mainMenuPanelEvent?.Invoke();
+        inputActionsUI.UIDefaultInput.AbilityMenu.performed += context => abilityPanelEvent?.Invoke();
+        inputActionsUI.UIDefaultInput.Invent.performed += context => inventoryPanelEvent?.Invoke();
+        inputActionsUI.UIDefaultInput.MainMenu.performed += context => mainMenuPanelEvent?.Invoke();
 
-        inputController.UIInGameMenuInput.ExitMenu.performed += context => exitMenuEvent?.Invoke();
+        inputActionsUI.UIInGameMenuInput.ExitMenu.performed += context => exitMenuEvent?.Invoke();
     }
 }

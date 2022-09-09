@@ -2,20 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class InGameMenuState : BaseStateInput
+public class InGameMenuState : BaseStateInput<InputActionsUI, StateUI>
 {
-    private InputController inputController;
+    private InputActionsUI inputActionsUI;
     public override void Begin()
     {
-        inputController.UIInGameMenuInput.Enable();
+        inputActionsUI.UIInGameMenuInput.Enable();
     }
 
-    public override void Exit()
+    public override void Exit(StateUI nextStateUI)
     {
-        inputController.UIInGameMenuInput.Disable();
+        inputActionsUI.UIInGameMenuInput.Disable();
     }
-    public override void Init(InputController _inputController)
+    public override void Init(InputActionsUI _inputActionsUI)
     {
-        inputController = _inputController;
+        inputActionsUI = _inputActionsUI;
     }
 }

@@ -2,21 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AttackStateInput : BaseStateInput
+public class AttackStateInput : BaseStateInput<InputActions, States>
 {
-    private InputController inputController;
+    private InputActions inputActions;
     public override void Begin()
     {
-        inputController.Attack.Attack.Enable();
+        inputActions.Attack.Attack.Enable();
     }
 
-    public override void Exit()
+    public override void Exit(States nextState)
     {
-        inputController.Attack.Attack.Disable();
+        inputActions.Attack.Attack.Disable();
     }
 
-    public override void Init(InputController _inputController)
+    public override void Init(InputActions _inputActions)
     {
-        inputController = _inputController;
+        inputActions = _inputActions;
     }
 }

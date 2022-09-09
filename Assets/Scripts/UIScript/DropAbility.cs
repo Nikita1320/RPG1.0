@@ -15,7 +15,6 @@ public class DropAbility : MonoBehaviour, IDropHandler
         {
             if (drag.OldParent.TryGetComponent(out AbilitySlotQuickAccess dragSlot)) //перемещение из дерева или из слота доступа?
             {
-                //AbilitySlotQuickAccess dragSlot = abilityConteiner.currentSlot.GetComponent<AbilitySlotQuickAccess>();
                 if (dropAbilitySlot.AbilityConteinerInSlot == null) //слот пуст?
                 {
                     dropAbilitySlot.AddAbility(abilityConteiner);
@@ -27,8 +26,10 @@ public class DropAbility : MonoBehaviour, IDropHandler
                     AbilityConteiner temp = dropAbilitySlot.AbilityConteinerInSlot;
 
                     MoveToSlot(abilityConteiner.transform, transform);
+                    dropAbilitySlot.ClearSlot(false);
                     dropAbilitySlot.AddAbility(abilityConteiner);
 
+                    dragSlot.ClearSlot(false);
                     dragSlot.AddAbility(temp);
                     MoveToSlot(temp.transform, dragSlot.transform);
                 }

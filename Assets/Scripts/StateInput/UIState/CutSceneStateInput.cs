@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CutSceneStateInput : UIStateBase
+public class CutSceneStateInput : UIStateBase<InputActionsUI>
 {
-    private UIStateMachine uiStateMachine;
+    private InputActionsUI inputActionsUI;
     public override void Begin()
     {
 
@@ -14,8 +14,8 @@ public class CutSceneStateInput : UIStateBase
     {
 
     }
-    public override void Init(UIStateMachine _uiStateMachine)
+    public override void Init(InputActionsUI _inputActionsUI)
     {
-        uiStateMachine = _uiStateMachine;
+        inputActionsUI = _inputActionsUI;
     }
 }

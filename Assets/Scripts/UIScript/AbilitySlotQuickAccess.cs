@@ -3,57 +3,61 @@ using UnityEngine;
 public class AbilitySlotQuickAccess : MonoBehaviour
 {
     [SerializeField] private string nameAnimationInBaseAnimator;
-
     [SerializeField]private AbilityConteiner abilityConteiner;
+
+    private InputController inputController;
+    private AnimatorManager animatorManager;
+    private int indexSlot;
+    
     private AbilityBase ability;
 
-    private int indexSlot;
-    private StateMachine stateMachine;
-    private AnimatorManager animatorManager;
-    private CoolDown coolDown;
-    public AbilityConteiner AbilityConteinerInSlot => abilityConteiner;
+    private bool slotIsBlocked = false;
 
-    private void Start()
-    {
-        coolDown = GetComponent<CoolDown>();
-        coolDown.endCoolDownEvent += EnableDragDrop;
-    }
+    public AbilityConteiner AbilityConteinerInSlot => abilityConteiner;
+    public bool SlotIsBlocked => slotIsBlocked;
     public void AddAbility(AbilityConteiner _abilityConteiner)
     {
         abilityConteiner = _abilityConteiner;
 
         ability = abilityConteiner.gameObject.GetComponent<AbilityBase>();
 
-        /*if (ability.TypeAbility == TypeAbility.Active)
+        if (ability.TryGetComponent(out ActiveAbilityBase activeAbility))
         {
-            animatorManager.ChangeAnimation(nameAnimationInBaseAnimator, ability.GetComponent<ActiveAbilityBase>().Animation);
+            animatorManager.ChangeAnimation(nameAnimationInBaseAnimator, activeAbility.Animation);
+            activeAbility.endCoolDownTimerEvent += EnableDragDrop;
         }
         else
         {
-            ability.Begin(stateMachine.gameObject);
-        }*/
+            ability.Begin(inputController.gameObject);
+        }
     }
     public void ClearSlot(bool returnAbilityToTree)
     {
-        if (abilityConteiner && !coolDown.TimerIsRun)
+        if (abilityConteiner && !slotIsBlocked)
         {
             if (returnAbilityToTree)
             {
                 abilityConteiner.ReturnAbilityToTree();
-                if (ability.TypeAbility == TypeAbility.Passive)
+                if (ability.TryGetComponent(out PassiveAbilityBase passiveAbility))
                 {
-                    ability.GetComponent<PassiveAbilityBase>().EndAbility();
+                    passiveAbility.EndAbility();
                 }
+            }
+            if (ability.TryGetComponent(out ActiveAbilityBase activeAbility))
+            {
+                activeAbility.endCoolDownTimerEvent -= EnableDragDrop;
             }
             abilityConteiner = null;
         }
     }
     public void StartAbility()
     {
-        if (abilityConteiner && ability.TypeAbility == TypeAbility.Active && !coolDown.TimerIsRun)
+        if (abilityConteiner && ability.TryGetComponent(out ActiveAbilityBase activeAbility) && activeAbility.IsReadyToUse)
         {
-            ability.Begin(stateMachine.gameObject);
-            coolDown.StartTimer(ability.GetComponent<ActiveAbilityBase>().CoolDown);
+            animatorManager.Animator.SetInteger("AbilityIndex", indexSlot);
+            animatorManager.Animator.SetTrigger("ActiveAbility");
+            activeAbility.Begin(inputController.gameObject);
+            inputController.ChangeState(States.UseAbility);
             DisableDragDrop();
         }
     }
@@ -61,20 +65,22 @@ public class AbilitySlotQuickAccess : MonoBehaviour
     {
         ability.GetComponent<ActiveAbilityBase>().Use();
     }
-    public void Init(int _indexSlot, StateMachine _stateMachine, AnimatorManager _animatorManager)
+    public void Init(int _indexSlot, InputController _inputController, AnimatorManager _animatorManager)
     {
         indexSlot = _indexSlot;
-        stateMachine = _stateMachine;
+        inputController = _inputController;
         animatorManager = _animatorManager;
     }
     private void DisableDragDrop()
     {
         GetComponent<DropAbility>().enabled = false;
         abilityConteiner.gameObject.GetComponent<Drag>().enabled = false;
+        slotIsBlocked = true;
     }
     private void EnableDragDrop()
     {
         GetComponent<DropAbility>().enabled = true;
         abilityConteiner.gameObject.GetComponent<Drag>().enabled = true;
+        slotIsBlocked = false;
     }
 }

@@ -8,6 +8,6 @@ public class TestGetEffect : MonoBehaviour
     {
         EffectBase e = collision.gameObject.AddComponent<TestDamageEffect>();
         e.Init(gameObject);
-        collision.gameObject.GetComponent<EffectsManager>().AddEffect(e);
+        collision.gameObject.GetComponent<PlayerEffectsManager>().AddEffect(e);
     }
 }

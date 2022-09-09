@@ -6,54 +6,46 @@ public class TestDamageEffect : EffectBase
 {
     private GameObject sender;
     private GameObject character;
-    private EffectConteiner conteiner;
     private Health health;
     private Coroutine coroutine;
+    private float timeTick = 1;
     private float duration = 5;
-    private void Awake()
+    private float remained;
+    public override void Init(GameObject _sender)
     {
+        sender = _sender;
         effectData = Resources.Load<EffectDataSO>("SOScript/TestEffectData");
-        Debug.Log($"{effectData} in Awake");
     }
-    public override void Begin(GameObject _gameObject, EffectConteiner _conteiner)
+    public override void Begin(GameObject _gameObject)
     {
         character = _gameObject;
-        conteiner = _conteiner;
         health = _gameObject.GetComponent<Health>();
-        coroutine = StartCoroutine(GetDamage());
+        coroutine = StartCoroutine(Timer(timeTick));
+        remained = duration;
     }
-    IEnumerator GetDamage()
+    public override void Use()
     {
-        float t = duration;
-        while (true)
+        health.ApplyDamage(new Damage(10, TypeDamage.Magic, sender, TypeSenderDamage.Effect));
+        remained--;
+        tickEvent?.Invoke(1 - (remained / duration));
+        Debug.Log("damage");
+        if (remained <= 0)
         {
-            yield return new WaitForSeconds(1f);
-            health.ApplyDamage(new Damage(10, TypeDamage.Magic, gameObject, TypeSenderDamage.Effect));
-            t--;
-            conteiner.CoolDownImage.fillAmount = 1 - (t / duration);
-            Debug.Log("damage");
-            if (t <= 0)
-            {
-                End();
-            }
+            End();
         }
     }
 
     public override void End()
     {
         StopCoroutine(coroutine);
-        Destroy(conteiner.gameObject);
-        character.GetComponent<EffectsManager>().activeEffects.Remove(this);
+        endEffectEvent?.Invoke();
+        GetComponent<PlayerEffectsManager>().activeEffects.Remove(this);
         Destroy(this);
     }
+    
 
     public override void UpdateTimeWork()
     {
 
-    }
-
-    public override void Init(GameObject _sender)
-    {
-        sender = _sender;
     }
 }

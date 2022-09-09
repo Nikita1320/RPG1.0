@@ -21,6 +21,7 @@ public class EffectDataSO : ScriptableObject
     [SerializeField] private TypeInfluenceEffect typeInfluence;
     [SerializeField] private TypeLifeCycleEffect typeLifeCycle;
     [SerializeField] private bool canBeRemoved;
+    [SerializeField] private bool superimposedThroughImmunityToEffect;
 
     public string NameEffect => nameEffect;
     public string Description => description;
@@ -28,4 +29,5 @@ public class EffectDataSO : ScriptableObject
     public TypeInfluenceEffect TypeInfluence => typeInfluence;
     public TypeLifeCycleEffect TypeLifeCycle => typeLifeCycle;
     public bool CanBeRemoved => canBeRemoved;
+    public bool SuperimposedThroughImmunityToEffect => superimposedThroughImmunityToEffect;
 }

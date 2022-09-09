@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum TypeDamage
@@ -7,7 +5,6 @@ public enum TypeDamage
     Physical,
     Magic
 }
-
 public enum TypeSenderDamage
 {
     Weapon,
@@ -39,12 +36,14 @@ public class Health : MonoBehaviour
     public delegate void ChangeCurrentArmor(float value);
     public delegate void ChangeMagicResistance(float value);
     public delegate Damage TakeDamage(Damage Damage);
+    public delegate void Dead();
 
     public ChangeCurrentHealth changeCurrentHealthEvent;
     public ChangeMaxHealth changeMaxHealthEvent;
     public ChangeCurrentArmor changeCurrentArmorEvent;
     public ChangeMagicResistance changeMagicResistanceEvent;
     public TakeDamage takeDamageEvent;
+    public Dead deadEvent;
 
     [SerializeField] private float baseHealth;
     private float valueOfChangeHealth;
@@ -58,25 +57,25 @@ public class Health : MonoBehaviour
     private float valueOfChangeMagicResistancer;
     private float ñoefficientOfChangeMagicResistance = 1;
 
-    public float curhel;
+    public float curhel;//For Editor
     public float CurrentHealth { get; private set; }
     public float MaxHealth { get { return (baseHealth + ValueOfChangeHealth) * ÑoefficientOfChangeHealth; } }
     public float ValueOfChangeHealth { private get { return valueOfChangeHealth; } set { RecalculationHealthWithCoefficient(value); valueOfChangeHealth += value; } }
     public float ÑoefficientOfChangeHealth { private get { return ñoefficientOfChangeHealth; } set { RecalculationHealthWithValue(value); ñoefficientOfChangeHealth *= value; } }
 
     public float CurrentArmor { get { return (baseArmor + ValueOfChangeHealth) * ÑoefficientOfChangeHealth; } }
-    public float ValueOfChangeArmor { private get { return valueOfChangeArmor; } set { valueOfChangeArmor += value; changeCurrentArmorEvent(CurrentArmor); } }
-    public float ÑoefficientOfChangeArmor { private get { return ñoefficientOfChangeArmor; } set { ñoefficientOfChangeArmor *= value; changeCurrentArmorEvent(CurrentArmor); } }
+    public float ValueOfChangeArmor { private get { return valueOfChangeArmor; } set { valueOfChangeArmor += value; changeCurrentArmorEvent?.Invoke(CurrentArmor); } }
+    public float ÑoefficientOfChangeArmor { private get { return ñoefficientOfChangeArmor; } set { ñoefficientOfChangeArmor *= value; changeCurrentArmorEvent?.Invoke(CurrentArmor); } }
 
     public float CurrentMagicResistance { get { return (baseMagicResistance + ValueOfChangeMagicResistance) * ÑoefficientOfChangeMagicResistance; } }
-    public float ValueOfChangeMagicResistance { private get { return valueOfChangeMagicResistancer; } set { valueOfChangeMagicResistancer += value; changeMagicResistanceEvent(CurrentMagicResistance); } }
-    public float ÑoefficientOfChangeMagicResistance { private get { return ñoefficientOfChangeMagicResistance; } set { ñoefficientOfChangeMagicResistance *= value; changeMagicResistanceEvent(CurrentMagicResistance); } }
+    public float ValueOfChangeMagicResistance { private get { return valueOfChangeMagicResistancer; } set { valueOfChangeMagicResistancer += value; changeMagicResistanceEvent?.Invoke(CurrentMagicResistance); } }
+    public float ÑoefficientOfChangeMagicResistance { private get { return ñoefficientOfChangeMagicResistance; } set { ñoefficientOfChangeMagicResistance *= value; changeMagicResistanceEvent?.Invoke(CurrentMagicResistance); } }
     private void Start()
     {
         CurrentHealth = MaxHealth;
         curhel = CurrentHealth;
     }
-    public void ApplyDamage(Damage damage)//(int damage, TypeDamage typeDamage)
+    public void ApplyDamage(Damage damage)
     {
         Damage totalDamage = damage;
         if (takeDamageEvent != null)
@@ -93,11 +92,11 @@ public class Health : MonoBehaviour
             CurrentHealth -= (totalDamage.AmountDamage - CurrentMagicResistance);
         }
 
-        if (TryGetComponent(out CombatSystem combatSystem))
+        if (TryGetComponent(out CombatSystemBase combatSystem))
         {
             combatSystem.causedDamageEvent?.Invoke(totalDamage);
         }
-        curhel = CurrentHealth;
+        curhel = CurrentHealth; //For Editor
         if (CurrentHealth <= 0)
         {
             Death();
@@ -111,23 +110,24 @@ public class Health : MonoBehaviour
         {
             CurrentHealth = MaxHealth;
         }
-        changeCurrentHealthEvent(CurrentHealth);
+        changeCurrentHealthEvent?.Invoke(CurrentHealth);
     }
     public void Death()
     {
+        deadEvent();
         Destroy(gameObject);
     }
     private void RecalculationHealthWithCoefficient(float coefficient)
     {
         CurrentHealth *= coefficient;
-        changeMaxHealthEvent(MaxHealth);
-        changeCurrentHealthEvent(CurrentHealth);
+        changeMaxHealthEvent?.Invoke(MaxHealth);
+        changeCurrentHealthEvent?.Invoke(CurrentHealth);
     }
     private void RecalculationHealthWithValue(float value)
     {
         float percentOfMax = CurrentHealth / MaxHealth;
         CurrentHealth += value * percentOfMax;
-        changeMaxHealthEvent(MaxHealth);
-        changeCurrentHealthEvent(CurrentHealth);
+        changeMaxHealthEvent?.Invoke(MaxHealth);
+        changeCurrentHealthEvent?.Invoke(CurrentHealth);
     }
 }

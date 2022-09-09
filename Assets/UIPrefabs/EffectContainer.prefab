@@ -144,7 +144,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Description
+  m_text: Description Effect
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -171,10 +171,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
+  m_fontSize: 19.95
   m_fontSizeBase: 36
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
@@ -225,6 +225,7 @@ GameObject:
   - component: {fileID: 2557474462269378783}
   - component: {fileID: 2557474462269378782}
   - component: {fileID: 2557474462269378777}
+  - component: {fileID: 772164794346303580}
   m_Layer: 5
   m_Name: EffectContainer
   m_TagString: Untagged
@@ -291,6 +292,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   icon: {fileID: 2557474463453521342}
+  coolDownImage: {fileID: 2557474463397501638}
+--- !u!114 &772164794346303580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2557474462269378722}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5b2e762437390a45acf4fa7ad946094, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   coolDownImage: {fileID: 2557474463397501638}
 --- !u!1 &2557474462520624813
 GameObject:
