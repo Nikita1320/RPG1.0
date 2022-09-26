@@ -114,7 +114,7 @@ public class Health : MonoBehaviour
     }
     public void Death()
     {
-        deadEvent();
+        deadEvent?.Invoke();
         Destroy(gameObject);
     }
     private void RecalculationHealthWithCoefficient(float coefficient)

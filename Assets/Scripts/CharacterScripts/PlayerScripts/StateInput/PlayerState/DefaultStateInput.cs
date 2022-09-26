@@ -10,7 +10,6 @@ public class DefaultStateInput : BaseStateInput<InputActions, States>
         inputActions.Default.Enable();
         inputActions.InBlock.Enable();
     }
-
     public override void Exit(States nextState)
     {
         if (nextState != States.Block)

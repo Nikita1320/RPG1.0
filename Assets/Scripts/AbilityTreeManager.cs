@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AbilityTreeManager : MonoBehaviour
 {
-    [SerializeField] private  UIStateMachine uiStateMachine;
+    [SerializeField] private  UIInputController inputsUI;
     [SerializeField] private AbilitySlotTree[] slotTrees;
 
     [SerializeField] private GameObject abilityTreePanel;
@@ -16,14 +16,14 @@ public class AbilityTreeManager : MonoBehaviour
     private void OnEnablePanel()
     {
         abilityTreePanel.SetActive(true);
-        uiStateMachine.ChangeStateUI(StateUI.GameMenu);
+        inputsUI.ChangeStateUI(StateUI.GameMenu);
     }
     private void OnDisablePanel()
     {
         if (abilityTreePanel.activeSelf)
         {
             abilityTreePanel.SetActive(false);
-            uiStateMachine.ChangeStateUI(StateUI.Default);
+            inputsUI.ChangeStateUI(StateUI.Default);
         }
     }
     private void ChangeUIState(StateUI stateUI)
@@ -32,8 +32,8 @@ public class AbilityTreeManager : MonoBehaviour
     }
     public void SubscribeOnEvent()
     {
-        uiStateMachine.changeUIStateEvent += ChangeUIState;
-        uiStateMachine.abilityPanelEvent += OnEnablePanel;
-        uiStateMachine.exitMenuEvent += OnDisablePanel;
+        inputsUI.changeUIStateEvent += ChangeUIState;
+        inputsUI.abilityPanelEvent += OnEnablePanel;
+        inputsUI.exitMenuEvent += OnDisablePanel;
     }
 }

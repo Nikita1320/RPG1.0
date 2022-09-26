@@ -24,13 +24,12 @@ public class DropItem : MonoBehaviour, IDropHandler
         Drag drag = eventData.pointerDrag.GetComponent<Drag>();
         if (drag.gameObject.TryGetComponent(out ItemBase itemBase))
         {
-            if (itemSlot.IsEmpty)
+            if (itemSlot.Item == null)
             {
                 if ((int)typeOfAcceptedItem == (int)itemBase.TypeItem || typeOfAcceptedItem == TypeOfAcceptedItem.Any)
                 {
                     itemSlot.AddItem(itemBase);
                     drag.OldParent.GetComponent<ItemSlotBase>().RemoveItem();
-
                     itemBase.gameObject.transform.SetParent(itemSlot.transform);
                 }
             }
@@ -61,8 +60,14 @@ public class DropItem : MonoBehaviour, IDropHandler
                     }
                     else
                     {
-                        drag.OldParent.GetComponent<ItemSlotBase>().AddItem(itemSlot.Item);
-                        itemSlot.AddItem(itemBase);
+                        ItemBase dragItem = drag.OldParent.GetComponent<ItemSlotBase>().Item;
+                        ItemBase dropItem = itemSlot.Item;
+
+                        drag.OldParent.GetComponent<ItemSlotBase>().RemoveItem();
+                        drag.OldParent.GetComponent<ItemSlotBase>().AddItem(dropItem);
+
+                        itemSlot.RemoveItem();
+                        itemSlot.AddItem(dragItem);
 
                         itemBase.gameObject.transform.SetParent(itemSlot.transform);
                         itemBase.gameObject.transform.localPosition = Vector3.zero;

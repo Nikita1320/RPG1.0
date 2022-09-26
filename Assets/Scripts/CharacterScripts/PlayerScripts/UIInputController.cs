@@ -8,13 +8,13 @@ public enum StateUI
     GameMenu,
     CutScene
 }
-public class UIStateMachine : MonoBehaviour
+public class UIInputController : MonoBehaviour
 {
     [SerializeField] private InputController inputController;
     private List<BaseStateInput<InputActionsUI, StateUI>> statesUI = new List<BaseStateInput<InputActionsUI, StateUI>>();
     private BaseStateInput<InputActionsUI, StateUI> currentStateUI;
 
-    public InputActions inputs;
+    private InputActions inputs;
     private InputActionsUI inputActionsUI;
 
     public delegate void ChangeUIStateEvent(StateUI _stateUI);
@@ -34,7 +34,8 @@ public class UIStateMachine : MonoBehaviour
 
     private void Start()
     {
-        inputs = inputController.Inputs;
+        inputController = GetComponent<InputController>();
+        inputs = inputController.InputsAction;
         inputActionsUI = new InputActionsUI();
         InitEvent();
         InitStates();

@@ -3,7 +3,7 @@ using UnityEngine;
 public class InventoryManager : MonoBehaviour
 {
     [SerializeField] private GameObject inventoryPanel;
-    [SerializeField] private UIStateMachine uiStateMachine;
+    [SerializeField] private UIInputController inputsUI;
     [SerializeField] private ItemSlotBase[] slotInventoryBackpacks;
     [SerializeField] private EquipmentSlot[] slotEquipment;
     [SerializeField] private ConsumableSlot[] slotConsumables;
@@ -11,19 +11,21 @@ public class InventoryManager : MonoBehaviour
 
     private void Start()
     {
+        inputsUI = GetComponent<UIInputController>();
         InitSlots();
+        SubscribeOnEvent();
     }
     private void OnEnablePanel()
     {
         inventoryPanel.SetActive(true);
-        uiStateMachine.ChangeStateUI(StateUI.GameMenu);
+        inputsUI.ChangeStateUI(StateUI.GameMenu);
     }
     private void OnDisablePanel()
     {
         if (inventoryPanel.activeSelf)
         {
             inventoryPanel.SetActive(false);
-            uiStateMachine.ChangeStateUI(StateUI.Default);
+            inputsUI.ChangeStateUI(StateUI.Default);
         }
     }
     private void ChangeUIState(StateUI stateUI)
@@ -32,9 +34,9 @@ public class InventoryManager : MonoBehaviour
     }
     public void SubscribeOnEvent()
     {
-        uiStateMachine.changeUIStateEvent += ChangeUIState;
-        uiStateMachine.inventoryPanelEvent += OnEnablePanel;
-        uiStateMachine.exitMenuEvent += OnDisablePanel;
+        inputsUI.changeUIStateEvent += ChangeUIState;
+        inputsUI.inventoryPanelEvent += OnEnablePanel;
+        inputsUI.exitMenuEvent += OnDisablePanel;
     }
     private void InitSlots()
     {

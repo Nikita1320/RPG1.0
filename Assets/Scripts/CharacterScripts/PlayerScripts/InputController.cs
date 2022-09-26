@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 
 public enum States
 {
@@ -45,16 +48,16 @@ public class InputController : MonoBehaviour
     public delegate void ConsumableEvent(int consumableNumber);
     public ConsumableEvent consumableEvent;
 
-    private InputActions inputs;
+    private InputActions inputsAction;
     
     private List<BaseStateInput<InputActions, States>> states = new List<BaseStateInput<InputActions, States>>();
     private States currentState;
-    public InputActions Inputs => inputs;
+    public InputActions InputsAction => inputsAction;
     public States CurrentState => currentState;
 
     void Awake()
     {
-        inputs = new InputActions();
+        inputsAction = new InputActions();
     }
     private void Start()
     {
@@ -67,7 +70,7 @@ public class InputController : MonoBehaviour
     {
         if (currentState == States.Default)
         {
-            moveEvent?.Invoke(inputs.Default.Move.ReadValue<Vector2>());
+            moveEvent?.Invoke(inputsAction.Default.Move.ReadValue<Vector2>());
         }
     }
 
@@ -97,28 +100,44 @@ public class InputController : MonoBehaviour
 
         for (int i = 0; i < states.Count; i++)
         {
-            states[i].Init(inputs);
+            states[i].Init(inputsAction);
         }
 
         ChangeState(States.Default);
     }
     private void InitEvent()
     {
-        inputs.Default.Jump.performed += context => jumpEvent?.Invoke();
-        inputs.Default.Jerk.performed += context => jerkEvent?.Invoke();
-        inputs.Default.Block.performed += context => blockEvent?.Invoke();
-        inputs.InBlock.ExitBlock.performed += context => exitBlockEvent?.Invoke();
-        inputs.Default.Attack.performed += context => attackEvent?.Invoke();
-        inputs.Attack.Attack.performed += context => attackEvent?.Invoke();
+        inputsAction.Default.Jump.performed += context => jumpEvent?.Invoke();
+        inputsAction.Default.Jerk.performed += context => jerkEvent?.Invoke();
+        inputsAction.Default.Block.performed += context => blockEvent?.Invoke();
+        inputsAction.InBlock.ExitBlock.performed += context => exitBlockEvent?.Invoke();
+        inputsAction.Default.Attack.performed += context =>
+        {
+            RaycastResult lastRaycastResult = ((InputSystemUIInputModule)EventSystem.current.currentInputModule).GetLastRaycastResult(Mouse.current.deviceId);
+            const int uiLayer = 5;
+            if (!(lastRaycastResult.gameObject != null && lastRaycastResult.gameObject.layer == uiLayer))
+            {
+                attackEvent?.Invoke();
+            }
+        };
+        inputsAction.Attack.Attack.performed += context => 
+        {
+            RaycastResult lastRaycastResult = ((InputSystemUIInputModule)EventSystem.current.currentInputModule).GetLastRaycastResult(Mouse.current.deviceId);
+            const int uiLayer = 5;
+            if (!(lastRaycastResult.gameObject != null && lastRaycastResult.gameObject.layer == uiLayer))
+            {
+                attackEvent?.Invoke();
+            }
+        };
 
-        inputs.Default.Ability1.performed += context => abilityEvent?.Invoke(0);
-        inputs.Default.Ability2.performed += context => abilityEvent?.Invoke(1);
-        inputs.Default.Ability3.performed += context => abilityEvent?.Invoke(2);
-        inputs.Default.Ability4.performed += context => abilityEvent?.Invoke(3);
-        inputs.Default.Ability5.performed += context => abilityEvent?.Invoke(4);
+        inputsAction.Default.Ability1.performed += context => abilityEvent?.Invoke(0);
+        inputsAction.Default.Ability2.performed += context => abilityEvent?.Invoke(1);
+        inputsAction.Default.Ability3.performed += context => abilityEvent?.Invoke(2);
+        inputsAction.Default.Ability4.performed += context => abilityEvent?.Invoke(3);
+        inputsAction.Default.Ability5.performed += context => abilityEvent?.Invoke(4);
 
-        inputs.Default.Consumables1.performed += context => consumableEvent?.Invoke(0);
-        inputs.Default.Consumables2.performed += context => consumableEvent?.Invoke(1);
+        inputsAction.Default.Consumables1.performed += context => consumableEvent?.Invoke(0);
+        inputsAction.Default.Consumables2.performed += context => consumableEvent?.Invoke(1);
     }
     public void RefreshCurrentState()
     {

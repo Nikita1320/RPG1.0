@@ -74,8 +74,8 @@ public class PlayerCombatSystem : CombatSystemBase
     {
         if (currentWeapon)
         {
-            Vector3 ps2 = transform.position + (transform.forward - currentWeapon.PositionsCheckEnemy[currentIndexAttack]);
-            Collider[] check = Physics.OverlapSphere(ps2, currentWeapon.RadiusCheckEnemy[currentIndexAttack]);
+            Vector3 pointAttack = transform.position + (transform.forward - currentWeapon.PositionsCheckEnemy[currentIndexAttack]);
+            Collider[] check = Physics.OverlapSphere(pointAttack, currentWeapon.RadiusCheckEnemy[currentIndexAttack]);
             foreach (var item in check)
             {
                 if (item.TryGetComponent(out Health health))
@@ -90,8 +90,8 @@ public class PlayerCombatSystem : CombatSystemBase
         }
         else
         {
-            Vector3 ps2 = transform.position + (transform.forward - defaultPositionsCheckEnemyRegardingTransformForfard[currentIndexAttack]);
-            Collider[] check = Physics.OverlapSphere(ps2, defaultRadiusCheckEnemy[currentIndexAttack]);
+            Vector3 pointAttack = transform.position + (transform.forward - defaultPositionsCheckEnemyRegardingTransformForfard[currentIndexAttack]);
+            Collider[] check = Physics.OverlapSphere(pointAttack, defaultRadiusCheckEnemy[currentIndexAttack]);
             foreach (var item in check)
             {
                 if (item.TryGetComponent(out Health health))
@@ -99,7 +99,7 @@ public class PlayerCombatSystem : CombatSystemBase
                     if (health != GetComponent<Health>())
                     {
                         health.ApplyDamage(new Damage(CurrentDamage, TypeDamage.Physical, gameObject, TypeSenderDamage.Weapon));
-                        hitEnemyEvent(health);
+                        hitEnemyEvent?.Invoke(health);
                     }
                 }
             }
